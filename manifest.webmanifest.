@@ -1,0 +1,18 @@
+{
+  "name": "दिमागी कसरत",
+  "short_name": "दिमागी कसरत",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#09051a",
+  "theme_color": "#00e5ff",
+  "lang": "hi",
+  "description": "दिमागी कसरत - हिंदी क्विज गेम",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
