@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d0b18">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>दिमागी कसरत — Quiz Game</title>
 <style>
 :root{--bg:#0d0b18;--card:#18152b;--card2:#211c38;--ink:#f7f3ff;--muted:#aaa1c7;--line:#342d50;--a:#8b5cf6;--b:#06b6d4;--ok:#22c55e;--bad:#ef4444}
@@ -15,43 +16,8 @@ button,input{font:inherit}button{cursor:pointer}main{max-width:620px;margin:auto
 .q{font-size:1.2rem;font-weight:800;line-height:1.55;margin-bottom:18px}.opt{display:block;width:100%;text-align:left;padding:13px 15px;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:12px;margin:0 0 10px}.opt:hover{border-color:var(--a)}.opt.ok{border-color:var(--ok);background:#0d2b1a;color:#86efac}.opt.bad{border-color:var(--bad);background:#3a1518;color:#fca5a5}.status{min-height:24px;font-weight:700;margin:4px 0}.timer{font-weight:900;color:#22d3ee}.warn{color:#ef4444;animation:pulse .5s infinite}@keyframes pulse{50%{opacity:.45}}
 .score{text-align:center;font-size:4.5rem;line-height:1;font-weight:900;background:linear-gradient(90deg,#a78bfa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;margin:15px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;background:var(--card2);padding:10px;border-radius:12px}.stat b{display:block;font-size:1.25rem}.stat small{color:var(--muted)}.rank{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--line)}.rank:last-child{border:0}.rank strong{color:#facc15}.section-title{margin-bottom:10px}.footer{text-align:center;color:#746d8b;font-size:.72rem;margin-top:18px}.sound{position:fixed;right:12px;top:12px;width:40px;height:40px;border-radius:50%;background:var(--card);color:white;border:1px solid var(--line);z-index:5}.hidden{display:none!important}@media(max-width:390px){.grid{grid-template-columns:1fr}.q{font-size:1.08rem}}
 </style>
-
-<meta name="theme-color" content="#12002b">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="दिमागी कसरत">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
-
-
-<style id="pwa-install-style">
-#installAppBtn{
-  display:none;
-  width:100%;
-  margin:12px 0 0;
-  padding:14px 18px;
-  border:0;
-  border-radius:14px;
-  background:linear-gradient(135deg,#00e5ff,#7c4dff);
-  color:#fff;
-  font-size:17px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 8px 24px rgba(0,229,255,.18);
-}
-#installAppBtn.show{display:block}
-#installAppBtn:active{transform:scale(.98)}
-</style>
-
 </head>
 <body>
-
-<button id="installAppBtn" type="button" aria-label="दिमागी कसरत ऐप Home Screen पर Install करें">
-  📲 Home Screen पर Install करें
-</button>
-
 <button class="sound" id="sound">🔊</button>
 <main id="app"></main>
 <script>
@@ -115,7 +81,6 @@ function cleanAll(){
   const days=["सोमवार","मंगलवार","बुधवार","गुरुवार","शुक्रवार","शनिवार","रविवार"];
   for(let n=1;n<=50;n++){
     lg.push([`एक कतार में ${n+2} लोग हैं। राम बाएँ से ${n}वें हैं। उनके दाएँ कितने लोग हैं?`,[String(1),String(2),String(3),String(4)],1]);
-    lg.push([`एक संख्या 10 से बड़ी और ${n+10} से छोटी है। इनमें कौन-सी निश्चित रूप से संभव है?`,[String(n+9),String(n+10),String(n+11),String(n+12)],0]);
   }
   for(let n=0;n<50;n++){
     const d=days[n%7], next=days[(n+2)%7];
@@ -326,14 +291,18 @@ function categories(){
 }
 function daily(){
  let keys=Object.keys(DATA),seed=new Date().toISOString().slice(0,10),n=[...seed].reduce((a,c)=>a+c.charCodeAt(0),0);
- let pool=[];keys.forEach(k=>DATA[k].qs.forEach(q=>pool.push({...q,key:k})));
- pool.sort((a,b)=>hash(a[0]+seed)-hash(b[0]+seed));questions=pool.slice(0,10);catKey="daily";mode="daily";run();
+ let pool=[];keys.forEach(k=>DATA[k].qs.forEach(q=>pool.push([q[0],[...q[1]],q[2],k])));
+ pool.sort((a,b)=>hash(a[0]+seed)-hash(b[0]+seed));questions=pool.slice(0,10).map(q=>[q[0],[...q[1]],q[2]]);catKey="daily";mode="daily";run();
 }
 function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return Math.abs(h)}
-function start(k){catKey=k;mode="normal";questions=[...DATA[k].qs].sort(()=>Math.random()-.5).slice(0,Math.min(10,DATA[k].qs.length));run()}
+function start(k){catKey=k;mode="normal";questions=[...DATA[k].qs].map(q=>[q[0],[...q[1]],q[2]]).sort(()=>Math.random()-.5).slice(0,Math.min(10,DATA[k].qs.length));run()}
 function run(){qi=0;score=0;right=0;showQ()}
 function showQ(){
- clearInterval(timer);answered=false;time=mode==="daily"?15:15;let q=questions[qi];
+ clearInterval(timer);answered=false;time=15;let q=questions[qi];
+ // हर सवाल के विकल्प अलग क्रम में रखें और सही उत्तर का index साथ में बदलें।
+ const choices=q[1].map((text,index)=>({text,correct:index===q[2]}));
+ for(let i=choices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+ q[1]=choices.map(x=>x.text);q[2]=choices.findIndex(x=>x.correct);
  app.innerHTML=`<div class="row"><span class="badge">${catKey==="daily"?"📅 Daily Quiz":DATA[catKey].emoji+" "+DATA[catKey].name}</span><span>${qi+1}/${questions.length}</span></div>
  <div class="row" style="margin-top:8px"><span>⭐ ${score}</span><span id="timer" class="timer">⏱️ ${time}s</span></div>
  <div class="progress"><i style="width:${qi/questions.length*100}%"></i></div>
@@ -365,51 +334,11 @@ function leaderboard(){
 function resetScores(){if(confirm("क्या आप सभी Best Scores मिटाना चाहते हैं?")){localStorage.removeItem("dk_best");leaderboard()}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 home();
-</script>
-
-<script id="pwa-install-script">
-(function(){
-  let deferredPrompt = null;
-  const btn = document.getElementById('installAppBtn');
-  if(!btn) return;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    btn.classList.add('show');
-  });
-
-  btn.addEventListener('click', async () => {
-    if (!deferredPrompt) {
-      alert('अगर Install विकल्प नहीं दिख रहा है, Chrome के ⋮ मेनू में जाकर "Add to Home screen" या "Install app" चुनें।');
-      return;
-    }
-    deferredPrompt.prompt();
-    const choice = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    if (choice && choice.outcome === 'accepted') btn.classList.remove('show');
-  });
-
-  window.addEventListener('appinstalled', () => {
-    deferredPrompt = null;
-    btn.classList.remove('show');
-  });
-
-  // If already running as an installed PWA, hide the button.
-  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-    btn.classList.remove('show');
-  }
-})();
-</script>
-
-
-<script id="pwa-sw-register">
-if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+    navigator.serviceWorker.register("./sw.js").catch(err => console.log("SW registration failed", err));
   });
 }
 </script>
-
 </body>
 </html>
