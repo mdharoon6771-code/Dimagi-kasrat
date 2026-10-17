@@ -405,3 +405,85 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+<!-- दिमागी कसरत: शेयर और WhatsApp बटन -->
+<style>
+#dk-contact-tools {
+  position: fixed;
+  right: 12px;
+  bottom: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+#dk-contact-tools button {
+  border: 0;
+  border-radius: 25px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 3px 12px #0005;
+  cursor: pointer;
+}
+
+#dk-share-btn {
+  background: #6d28d9;
+}
+
+#dk-whatsapp-btn {
+  background: #128c4a;
+}
+</style>
+
+<div id="dk-contact-tools">
+  <button id="dk-share-btn" type="button">
+    📤 शेयर करें
+  </button>
+
+  <button id="dk-whatsapp-btn" type="button">
+    💬 समस्या / सुझाव
+  </button>
+</div>
+
+<script>
+(function () {
+  const shareButton = document.getElementById("dk-share-btn");
+  const whatsappButton = document.getElementById("dk-whatsapp-btn");
+
+  const gameUrl = "https://mdharoon6771-code.github.io/Dimagi-kasrat/";
+  const whatsappNumber = "919565277265";
+
+  shareButton.addEventListener("click", async function () {
+    const shareData = {
+      title: "दिमागी कसरत — Quiz Game",
+      text: "अपनी दिमागी कसरत करें और क्विज खेलें!",
+      url: gameUrl
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(gameUrl);
+        alert("वेबसाइट का लिंक कॉपी हो गया है। अब WhatsApp पर भेज सकते हैं।");
+      } else {
+        window.prompt("वेबसाइट का लिंक कॉपी करें:", gameUrl);
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        window.prompt("वेबसाइट का लिंक कॉपी करें:", gameUrl);
+      }
+    }
+  });
+
+  whatsappButton.addEventListener("click", function () {
+    const message = "नमस्ते! दिमागी कसरत गेम के बारे में मेरी समस्या या सुझाव है।";
+    const link = "https://wa.me/" + whatsappNumber +
+      "?text=" + encodeURIComponent(message);
+
+    window.open(link, "_blank");
+  });
+})();
+</script>
