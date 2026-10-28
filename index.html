@@ -368,7 +368,13 @@ function daily(){
 }
 function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return Math.abs(h)}
 function start(k){catKey=k;mode="normal";questions=[...DATA[k].qs].map(q=>[q[0],[...q[1]],q[2]]).sort(()=>Math.random()-.5).slice(0,Math.min(10,DATA[k].qs.length));run()}
-function run(){qi=0;score=0;right=0;showQ()}
+function run(){
+  qi=0;
+  score=0;
+  right=0;
+  trackQuizEvent("quiz_start", {quiz_mode: mode, category: catKey});
+  showQ();
+                                }
 function showQ(){
  clearInterval(timer);answered=false;time=15;let q=questions[qi];
  // हर सवाल के विकल्प अलग क्रम में रखें और सही उत्तर का index साथ में बदलें।
@@ -382,13 +388,23 @@ function showQ(){
  timer=setInterval(()=>{time--;let t=document.getElementById("timer");if(t){t.textContent="⏱️ "+time+"s";if(time<=5)t.classList.add("warn")}if(time<=0){clearInterval(timer);answer(-1)}},1000);
 }
 function answer(i){
- if(answered)return;answered=true;clearInterval(timer);let q=questions[qi],buttons=[...document.querySelectorAll(".opt")];buttons.forEach((b,n)=>{b.disabled=true;if(n===q[2])b.classList.add("ok")});
+ if(answered)return;
+answered=true;
+clearInterval(timer);
+trackQuizEvent("answer_selected", {category: catKey});;let q=questions[qi],buttons=[...document.querySelectorAll(".opt")];buttons.forEach((b,n)=>{b.disabled=true;if(n===q[2])b.classList.add("ok")});
  let st=document.getElementById("status");
  if(i===q[2]){right++;score+=10;st.textContent="🎉 सही जवाब！ +10";st.style.color="#22c55e";beep(700)}else{if(i>=0)buttons[i].classList.add("bad");st.textContent=i<0?"⏰ समय समाप्त!":"❌ गलत जवाब";st.style.color="#ef4444";beep(180)}
  document.getElementById("next").classList.remove("hidden");
 }
 function next(){qi++;if(qi>=questions.length)result();else showQ()}
 function result(){
+  trackQuizEvent("quiz_complete", {
+  quiz_mode: mode,
+  category: catKey,
+  score: score,
+  correct_answers: right,
+  total_questions: questions.length
+});
  clearInterval(timer);let pct=Math.round(right/questions.length*100),best=JSON.parse(localStorage.getItem("dk_best")||"{}"),key=catKey;
  let old=best[key]?.score||0,isNew=score>old;best[key]={score:Math.max(score,old),name:player,emoji:key==="daily"?"📅":DATA[key].emoji};localStorage.setItem("dk_best",JSON.stringify(best));
  app.innerHTML=`<div class="head"><div class="logo">${pct>=70?"🏆":"🧠"}</div><h1>क्विज़ पूरा!</h1></div><section class="card">
