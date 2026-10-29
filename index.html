@@ -322,6 +322,11 @@ function cleanAll(){
 cleanAll();
 let player=localStorage.getItem("dk_player")||"",mode="normal",catKey="",questions=[],qi=0,score=0,right=0,time=15,timer=null,answered=false,soundOn=true;
 const app=document.getElementById("app");
+  function trackQuizEvent(eventName, extraData = {}) {
+  if (typeof window.gtag === "function") {
+    window.gtag("event", eventName, extraData);
+  }
+}
 function beep(f,d=.1){if(!soundOn)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
 document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊":"🔇"};
 function home(){
