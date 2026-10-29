@@ -7,7 +7,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-VV614WHE5M');
 </script>
 <meta charset="utf-8">
@@ -44,7 +43,6 @@ pattern:{name:"पैटर्न",emoji:"🔢",qs:[
 riddle:{name:"पहेलियाँ",emoji:"🧠",qs:[
 ["सुबह 4 पैर, दोपहर 2, शाम 3 पैर पर कौन चलता है?",["घोड़ा","इंसान","कुर्सी","बिल्ली"],1],["दाँत हैं लेकिन काट नहीं सकता?",["कंघी","छुरी","शेर","बच्चा"],0],["जितना काटो उतना बड़ा होता जाता है?",["गड्ढा","कपड़ा","रोटी","पानी"],0],["बिना पंख उड़ता, बिना आँख रोता है?",["बादल","पंखा","चिड़िया","हवा"],0],["हमेशा आता है लेकिन कभी पहुँचता नहीं?",["कल","आज","बीता कल","सपना"],0],["जितना निकालते जाओ उतना बड़ा होता जाता है?",["गड्ढा","पेड़","घर","कपड़ा"],0]]}
 };
-
 // अतिरिक्त मौलिक सवाल — हर श्रेणी में 10 नए सवाल
 DATA.math.qs.push(
  ["18 × 5 = ?",["80","85","90","95"],2],
@@ -106,13 +104,10 @@ DATA.riddle.qs.push(
  ["किस चीज़ में शहर हैं, लेकिन घर नहीं; नदियाँ हैं, लेकिन पानी नहीं?",["चित्र","मानचित्र","कहानी","सपना"],1],
  ["कौन-सी चीज़ जितनी बढ़ती है, उतना कम दिखाई देता है?",["रोशनी","अंधेरा","धुआँ","बादल"],1]
 );
-
-
 function cleanAll(){
  const seen=new Set();
  for(const cat of Object.values(DATA)){cat.qs=cat.qs.filter(x=>{const key=x[0].trim().replace(/\s+/g," ").toLowerCase();if(seen.has(key))return false;seen.add(key);return true})}
 }
-
 /* ===== 100-100 QUESTION ENGINE =====
    हर कैटेगरी को कम-से-कम 100 यूनिक सवाल मिलते हैं।
    UI पर पूरी question-list कभी नहीं दिखाई जाती।
@@ -125,7 +120,6 @@ function cleanAll(){
       if(!seen.has(key)){cat.qs.push(q);seen.add(key)}
     }
   };
-
   // 1) गणित — अलग-अलग arithmetic questions
   let m=[];
   for(let n=1;n<=25;n++){
@@ -135,7 +129,6 @@ function cleanAll(){
     m.push([`${n*5} - ${n*2} = ?`,[String(n*3-1),String(n*3),String(n*3+1),String(n*3+2)],1]);
   }
   add(DATA.math,m);
-
   // 2) पैटर्न — स्पष्ट नियम वाले अलग-अलग sequences
   let pat=[];
   for(let n=2;n<=51;n++){
@@ -147,7 +140,6 @@ function cleanAll(){
     pat.push([`अगली संख्या: ${a}, ${b}, ${c}, ${d}, ?`,[String(e-1),String(e),String(e+1),String(e+2)],1]);
   }
   add(DATA.pattern,pat);
-
   // 3) लॉजिक — रोजमर्रा के छोटे reasoning problems
   let lg=[];
   const days=["सोमवार","मंगलवार","बुधवार","गुरुवार","शुक्रवार","शनिवार","रविवार"];
@@ -159,7 +151,6 @@ function cleanAll(){
     lg.push([`यदि आज ${d} है, तो 2 दिन बाद कौन-सा दिन होगा?`,[next,days[(n+1)%7],days[(n+3)%7],days[(n+4)%7]],0]);
   }
   add(DATA.logic,lg);
-
   // 4) सामान्य ज्ञान — 100 बुनियादी तथ्य
   const gkFacts=[
 ["भारत का राष्ट्रीय पशु कौन-सा है?",["शेर","बाघ","हाथी","हिरण"],1],
@@ -273,7 +264,6 @@ function cleanAll(){
 ["ईमेल में '@' चिन्ह का प्रयोग किसके लिए होता है?",["पता अलग करने के लिए","पासवर्ड के लिए","फाइल के लिए","वीडियो के लिए"],0]
   ];
   add(DATA.gk,gkFacts);
-
   // 5) पहेलियाँ — अलग wording और उत्तर वाले 100 brain teasers
   const riddles=[
 ["कौन-सी चीज़ टूटने पर आवाज़ नहीं करती?",["वादा","काँच","पत्थर","घंटी"],0],
@@ -298,7 +288,6 @@ function cleanAll(){
 ["कौन-सी चीज़ काटने पर भी दर्द नहीं करती?",["केक","उंगली","पेड़","हाथ"],0]
   ];
   add(DATA.riddle,riddles);
-
   // बाकी कमी को unique, deterministic brain-training questions से भरना
   const filler=(cat,prefix,answerIndex)=>{
     let out=[],i=1;
@@ -315,7 +304,6 @@ function cleanAll(){
   if(DATA.gk.qs.length<100)filler(DATA.gk,"सामान्य ज्ञान प्रश्न",0);
   if(DATA.pattern.qs.length<100)filler(DATA.pattern,"पैटर्न प्रश्न",1);
   if(DATA.riddle.qs.length<100)filler(DATA.riddle,"दिमागी पहेली",0);
-
   // पूरे डेटाबेस में duplicate प्रश्न हटाकर फिर 100 तक सीमित/सुनिश्चित करें।
   const allSeen=new Set();
   for(const cat of Object.values(DATA)){
@@ -331,14 +319,11 @@ function cleanAll(){
     }
   }
 })();
-
 cleanAll();
-
 let player=localStorage.getItem("dk_player")||"",mode="normal",catKey="",questions=[],qi=0,score=0,right=0,time=15,timer=null,answered=false,soundOn=true;
 const app=document.getElementById("app");
 function beep(f,d=.1){if(!soundOn)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
 document.getElementById("sound").onclick=()=>{soundOn=!soundOn;document.getElementById("sound").textContent=soundOn?"🔊":"🔇"};
-
 function home(){
  clearInterval(timer);
  app.innerHTML=`<div class="head"><div class="logo">🧠</div><h1>दिमागी कसरत</h1><div class="sub">सोचिए • जवाब दीजिए • रिकॉर्ड बनाइए</div></div>
@@ -373,8 +358,7 @@ function run(){
   score=0;
   right=0;
   trackQuizEvent("quiz_start", {quiz_mode: mode, category: catKey});
-  showQ();
-                                }
+  showQ()                               }
 function showQ(){
  clearInterval(timer);answered=false;time=15;let q=questions[qi];
  // हर सवाल के विकल्प अलग क्रम में रखें और सही उत्तर का index साथ में बदलें।
@@ -441,7 +425,6 @@ if ("serviceWorker" in navigator) {
   flex-direction: column;
   gap: 9px;
 }
-
 #dk-contact-tools button {
   border: 0;
   border-radius: 25px;
@@ -452,41 +435,33 @@ if ("serviceWorker" in navigator) {
   box-shadow: 0 3px 12px #0005;
   cursor: pointer;
 }
-
 #dk-share-btn {
   background: #6d28d9;
 }
-
 #dk-whatsapp-btn {
   background: #128c4a;
 }
 </style>
-
 <div id="dk-contact-tools">
   <button id="dk-share-btn" type="button">
     📤 शेयर करें
   </button>
-
   <button id="dk-whatsapp-btn" type="button">
     💬 समस्या / सुझाव
   </button>
 </div>
-
 <script>
 (function () {
   const shareButton = document.getElementById("dk-share-btn");
   const whatsappButton = document.getElementById("dk-whatsapp-btn");
-
   const gameUrl = "https://mdharoon6771-code.github.io/Dimagi-kasrat/";
   const whatsappNumber = "919565277265";
-
   shareButton.addEventListener("click", async function () {
     const shareData = {
       title: "दिमागी कसरत — Quiz Game",
       text: "अपनी दिमागी कसरत करें और क्विज खेलें!",
       url: gameUrl
     };
-
     try {
       if (navigator.share) {
         await navigator.share(shareData);
@@ -502,12 +477,10 @@ if ("serviceWorker" in navigator) {
       }
     }
   });
-
   whatsappButton.addEventListener("click", function () {
     const message = "नमस्ते! दिमागी कसरत गेम के बारे में मेरी समस्या या सुझाव है।";
     const link = "https://wa.me/" + whatsappNumber +
       "?text=" + encodeURIComponent(message);
-
     window.open(link, "_blank");
   });
 })();
